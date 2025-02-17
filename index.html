@@ -8,13 +8,31 @@
 </head>
 <body>
     <main>
-        <button id="modal-1" class="btn">Modal 1</button>
+        <button class="btn" data-modal="#modal-1">Modal 1</button>
+        <button class="btn" data-modal="#modal-2">Modal 2</button>
+        <button class="btn" data-modal="#modal-3">Modal 3</button>
     </main>
-    <div id="modal" class="modal-backdrop">
+    <div id="modal-1" class="modal-backdrop">
         <div class="modal-container">
-            <button id="modal-close" class="modal-close">&times</button>
+            <button class="modal-close">&times</button>
             <div class="modal-content">
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae, quia dicta. Vel dolorem sapiente illo voluptatum cum repellendus iure quo!</p>
+                <p>Modal 1</p>
+            </div>
+        </div>
+    </div>
+    <div id="modal-2" class="modal-backdrop">
+        <div class="modal-container">
+            <button class="modal-close">&times</button>
+            <div class="modal-content">
+                <p>Modal 2</p>
+            </div>
+        </div>
+    </div>
+    <div id="modal-3" class="modal-backdrop">
+        <div class="modal-container">
+            <button class="modal-close">&times</button>
+            <div class="modal-content">
+                <p>Modal 3</p>
             </div>
         </div>
     </div>
