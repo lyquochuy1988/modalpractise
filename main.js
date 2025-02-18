@@ -1,13 +1,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-// const formLogin = $("#template-modal-2").content.querySelector("#login-form");
-// formLogin.onclick = (e) => {
-//     e.preventDefault();
-//     console.log("Submitted");
-// }
-
-function Modal() {
+function Modal() {   
     this.open = (options = {}) => {
         const   { 
                     templateID,
@@ -75,6 +69,7 @@ function Modal() {
 
         // Add class no-scroll : disable scrolling
         document.body.classList.add("no-scroll");
+        document.body.style.paddingRight = getScrollbarWidth() + "px";
 
         return modalBackdrop;
     }
@@ -87,6 +82,7 @@ function Modal() {
 
         // Remove class no-scroll : enable scrolling
         document.body.classList.remove("no-scroll");
+        document.body.style.paddingRight = "";
     }
 }
 
@@ -99,24 +95,30 @@ btnModal1.onclick = () => {
     });
 }
 
-const modal2 = new Modal();
-const btnModal2 = document.querySelector("#modal-2");
+// const modal2 = new Modal();
+// const btnModal2 = document.querySelector("#modal-2");
 
-btnModal2.onclick = () => {
-    const modal = modal2.open({
-        templateID: "template-modal-2",
-        allowBackdropClose: false,
+// btnModal2.onclick = () => {
+//     const modal = modal2.open({
+//         templateID: "template-modal-2",
+//         allowBackdropClose: false,
+//     });
+// }
+
+
+function getScrollbarWidth() {
+    const div = document.createElement("div");
+    Object.assign(div.style, {
+        overflow: "scroll",
+        position: "absolute",
+        top: "-9999px",
     });
 
-    const loginForm = modal.querySelector("#login-form");
-    loginForm.onclick = (e) => {
-        e.preventDefault();
-        // console.log("Submitted");
-        const valueForm = {
-            email: $("#email").value.trim(),
-            password: $("#password").value.trim(),
-        };
+    document.body.appendChild(div);
 
-        // console.log(valueForm);
-    }
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    
+    document.body.removeChild(div);
+    return scrollbarWidth;
 }
+
