@@ -1,9 +1,18 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+// const formLogin = $("#template-modal-2").content.querySelector("#login-form");
+// formLogin.onclick = (e) => {
+//     e.preventDefault();
+//     console.log("Submitted");
+// }
+
 function Modal() {
     this.open = (options = {}) => {
-        const { templateID } = options;
+        const   { 
+                    templateID,
+                    allowBackdropClose = true,
+                } = options;
         const template = $(`#${templateID}`);
 
         if (!template) {
@@ -49,9 +58,11 @@ function Modal() {
         }
 
         // Modal Backdrop click
-        modalBackdrop.onclick = (e) => {
-            if (e.target === modalBackdrop) {
-                this.close(modalBackdrop);
+        if (allowBackdropClose) {
+            modalBackdrop.onclick = (e) => {
+                if (e.target === modalBackdrop) {
+                    this.close(modalBackdrop);
+                }
             }
         }
 
@@ -60,7 +71,12 @@ function Modal() {
             if (e.key === "Escape") {
                 this.close(modalBackdrop);
             }
-        })
+        });
+
+        // Add class no-scroll : disable scrolling
+        document.body.classList.add("no-scroll");
+
+        return modalBackdrop;
     }
 
     this.close = (modalELement) => {
@@ -68,6 +84,9 @@ function Modal() {
         modalELement.ontransitionend = () => {
             modalELement.remove();
         }
+
+        // Remove class no-scroll : enable scrolling
+        document.body.classList.remove("no-scroll");
     }
 }
 
@@ -84,7 +103,20 @@ const modal2 = new Modal();
 const btnModal2 = document.querySelector("#modal-2");
 
 btnModal2.onclick = () => {
-    modal2.open({
+    const modal = modal2.open({
         templateID: "template-modal-2",
+        allowBackdropClose: false,
     });
+
+    const loginForm = modal.querySelector("#login-form");
+    loginForm.onclick = (e) => {
+        e.preventDefault();
+        // console.log("Submitted");
+        const valueForm = {
+            email: $("#email").value.trim(),
+            password: $("#password").value.trim(),
+        };
+
+        // console.log(valueForm);
+    }
 }

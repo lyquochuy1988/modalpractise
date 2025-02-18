@@ -86,3 +86,7 @@ main {
 .modal-content p {
     line-height: 24px;
 }
+
+.no-scroll {
+    overflow: hidden;
+}
