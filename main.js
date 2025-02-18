@@ -2,7 +2,17 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 function Modal() {
-    this.open = (content) => {
+    this.open = (options = {}) => {
+        const { templateID } = options;
+        const template = $(`#${templateID}`);
+
+        if (!template) {
+            console.error(`#${templateID} not exists`);
+            return;
+        }
+
+        const content = template.content.cloneNode(true);
+
         // Create Element Modal Backdrop
         const modalBackdrop = document.createElement("div");
         modalBackdrop.classList = "modal-backdrop";
@@ -19,7 +29,7 @@ function Modal() {
         // Create Element Modal Content
         const modalContent = document.createElement("div");
         modalContent.classList = "modal-content";
-        modalContent.innerHTML = content;
+        modalContent.append(content);
 
         // Append Element
         modalContainer.append(modalClose, modalContent);
@@ -65,12 +75,16 @@ const modal1 = new Modal();
 const btnModal1 = document.querySelector("#modal-1");
 
 btnModal1.onclick = () => {
-    modal1.open('<h1>Modal 1</h1>');
+    modal1.open({
+        templateID: "template-modal-1",
+    });
 }
 
 const modal2 = new Modal();
 const btnModal2 = document.querySelector("#modal-2");
 
 btnModal2.onclick = () => {
-    modal2.open('<h1>Modal 2</h1>');
+    modal2.open({
+        templateID: "template-modal-2",
+    });
 }
