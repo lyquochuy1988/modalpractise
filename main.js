@@ -2,6 +2,33 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 function Modal() {   
+    // let _scrollbarWidth;
+    function getScrollbarWidth() {
+        if (getScrollbarWidth.value) {
+            console.log("Gia tri da duoc luu, khong can tinh toan lai");
+            return getScrollbarWidth.value;
+        }
+
+        const div = document.createElement("div");
+        Object.assign(div.style, {
+            overflow: "scroll",
+            position: "absolute",
+            top: "-9999px",
+        });
+    
+        document.body.appendChild(div);
+    
+        const scrollbarWidth = div.offsetWidth - div.clientWidth;
+        
+        document.body.removeChild(div);
+
+        getScrollbarWidth.value = scrollbarWidth;
+
+        console.log("Tinh toan kich thuoc thanh cuon: ", scrollbarWidth);
+
+        return scrollbarWidth;
+    }
+
     this.open = (options = {}) => {
         const   { 
                     templateID,
@@ -95,30 +122,16 @@ btnModal1.onclick = () => {
     });
 }
 
-// const modal2 = new Modal();
-// const btnModal2 = document.querySelector("#modal-2");
+const modal2 = new Modal();
+const btnModal2 = document.querySelector("#modal-2");
 
-// btnModal2.onclick = () => {
-//     const modal = modal2.open({
-//         templateID: "template-modal-2",
-//         allowBackdropClose: false,
-//     });
-// }
-
-
-function getScrollbarWidth() {
-    const div = document.createElement("div");
-    Object.assign(div.style, {
-        overflow: "scroll",
-        position: "absolute",
-        top: "-9999px",
+btnModal2.onclick = () => {
+    const modal = modal2.open({
+        templateID: "template-modal-2",
+        allowBackdropClose: false,
     });
-
-    document.body.appendChild(div);
-
-    const scrollbarWidth = div.offsetWidth - div.clientWidth;
-    
-    document.body.removeChild(div);
-    return scrollbarWidth;
 }
+
+
+
 
