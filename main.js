@@ -2,7 +2,6 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 function Modal() {   
-    // let _scrollbarWidth;
     function getScrollbarWidth() {
         if (getScrollbarWidth.value) {
             console.log("Gia tri da duoc luu, khong can tinh toan lai");
@@ -113,23 +112,38 @@ function Modal() {
     }
 }
 
-const modal1 = new Modal();
+const modal1 = new Modal({
+    templateID: "template-modal-1",
+});
 const btnModal1 = document.querySelector("#modal-1");
 
 btnModal1.onclick = () => {
-    modal1.open({
-        templateID: "template-modal-1",
-    });
+    modal1.open();
 }
 
-const modal2 = new Modal();
+const modal2 = new Modal({
+    templateID: "template-modal-2",
+    allowBackdropClose: false,
+    footer: true,
+    closeMethods: ["button", "escape"],
+    cssClass: ["class-1", "class-2"],
+    onOpen: () => {
+        console.log("Modal opened");
+    }, 
+    onClose: () => {
+        console.log("Modal closed");
+    }
+
+});
 const btnModal2 = document.querySelector("#modal-2");
 
 btnModal2.onclick = () => {
-    const modal = modal2.open({
-        templateID: "template-modal-2",
-        allowBackdropClose: false,
-    });
+    const modal = modal2.open();
+    modal2.close();
+    modal2.setFooterContent("html string");
+    modal2.addFooterButton("Cancel", "class-1 class-2", (e) => {});
+    modal2.addFooterButton("Agree", "class-3 class-4", (e) => {});
+    modal2.destroy();
 }
 
 
