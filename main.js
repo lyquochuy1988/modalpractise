@@ -9,6 +9,7 @@ function Modal(options = {}) {
         cssClass = [],
         onOpen,
         onClose,
+        footer = false,
     } = options;
 
     const template = $(`#${templateID}`);
@@ -84,11 +85,28 @@ function Modal(options = {}) {
         const modalContent = document.createElement("div");
         modalContent.classList = "modal-content";
         modalContent.append(content);
-
-        // Append Element
         modalContainer.append(modalContent);
+
+        if (footer) {
+            this._modalFooter = document.createElement("div");
+            this._modalFooter.classList = "modal-footer";
+
+            if (this._footerContent) {
+                this._modalFooter.innerHTML = this._footerContent;
+            }
+            modalContainer.append(this._modalFooter);
+        }
+
+        // Append Element        
         this._modalBackdrop.append(modalContainer);
         document.body.append(this._modalBackdrop);
+    }
+
+    this.setFooterContent = (html) => {
+        this._footerContent = html;
+        if (this._modalFooter) {
+            this._modalFooter.innerHTML = this._footerContent;
+        }
     }
 
     this.open = () => {
@@ -126,19 +144,24 @@ function Modal(options = {}) {
         document.body.classList.add("no-scroll");
         document.body.style.paddingRight = getScrollbarWidth() + "px";
 
-        this._modalBackdrop.ontransitionend = (e) => {            
-            if (e.propertyName !== 'transform') return;            
-
+        this._onTransitionEnd(() => {
             if (typeof onOpen === 'function') onOpen();
-        }
+        })
 
         return this._modalBackdrop;
     }
 
+    this._onTransitionEnd = (callback) => {
+        this._modalBackdrop.ontransitionend = (e) => {            
+            if (e.propertyName !== 'transform') return;    
+            if (typeof callback === 'function') callback();
+        }
+    }
+
     this.close = (destroy = destroyOnClose) => {
         this._modalBackdrop.classList.remove("show");
-        this._modalBackdrop.ontransitionend = (e) => {            
-            if (e.propertyName !== 'transform') return;
+       
+        this._onTransitionEnd(() => {
             if (this._modalBackdrop && destroy) {                
                 this._modalBackdrop.remove();
                 this._modalBackdrop = null;
@@ -149,9 +172,7 @@ function Modal(options = {}) {
             document.body.style.paddingRight = "";
 
             if (typeof onClose === 'function') onClose();
-        }
-
-        
+        })        
     }
 
     this.destroy = () => {
@@ -201,6 +222,18 @@ btnModal2.onclick = () => {
     // modal2.addFooterButton("Agree", "class-3 class-4", (e) => {});
     // modal2.destroy();
 }
+
+const modal3 = new Modal({
+    templateID: "template-modal-3",
+    footer: true,
+});
+
+modal3.setFooterContent("My footer content");
+
+modal3.open();
+
+
+
 
 
 

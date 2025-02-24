@@ -52,7 +52,7 @@ main {
     background-color: #fff;
     position: relative;
     width: min(600px, 90%);
-    padding: 20px;
+    padding: 20px 20px 0;
     border-radius: 5px;
     transform: scale(0);
     transition: transform 0.3s;
@@ -85,6 +85,10 @@ main {
 
 .modal-content p {
     line-height: 24px;
+}
+
+.modal-footer {
+    padding: 20px 0;
 }
 
 .no-scroll {
