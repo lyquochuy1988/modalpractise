@@ -7,6 +7,8 @@ function Modal(options = {}) {
         closeMethods = ["button", "overlay", "escape"],
         destroyOnClose = true,
         cssClass = [],
+        onOpen,
+        onClose,
     } = options;
 
     const template = $(`#${templateID}`);
@@ -124,21 +126,32 @@ function Modal(options = {}) {
         document.body.classList.add("no-scroll");
         document.body.style.paddingRight = getScrollbarWidth() + "px";
 
+        this._modalBackdrop.ontransitionend = (e) => {            
+            if (e.propertyName !== 'transform') return;            
+
+            if (typeof onOpen === 'function') onOpen();
+        }
+
         return this._modalBackdrop;
     }
 
     this.close = (destroy = destroyOnClose) => {
         this._modalBackdrop.classList.remove("show");
-        this._modalBackdrop.ontransitionend = () => {
-            if (this._modalBackdrop && destroy) {
+        this._modalBackdrop.ontransitionend = (e) => {            
+            if (e.propertyName !== 'transform') return;
+            if (this._modalBackdrop && destroy) {                
                 this._modalBackdrop.remove();
                 this._modalBackdrop = null;
             }
+
+            // Remove class no-scroll : enable scrolling
+            document.body.classList.remove("no-scroll");
+            document.body.style.paddingRight = "";
+
+            if (typeof onClose === 'function') onClose();
         }
 
-        // Remove class no-scroll : enable scrolling
-        document.body.classList.remove("no-scroll");
-        document.body.style.paddingRight = "";
+        
     }
 
     this.destroy = () => {
@@ -151,6 +164,12 @@ const modal1 = new Modal({
     closeMethods: ["button", "overlay"],
     destroyOnClose: false,
     cssClass: ['css-1', 'css-2'],
+    onOpen: () => {
+        console.log("Modal 1 opened");
+    }, 
+    onClose: () => {
+        console.log("Modal 1 closed");
+    }
 });
 const btnModal1 = document.querySelector("#modal-1");
 
@@ -164,12 +183,12 @@ const modal2 = new Modal({
     // footer: true,
     // closeMethods: ["button", "escape"],
     // cssClass: ["class-1", "class-2"],
-    // onOpen: () => {
-    //     console.log("Modal opened");
-    // }, 
-    // onClose: () => {
-    //     console.log("Modal closed");
-    // }
+    onOpen: () => {
+        console.log("Modal 2 opened");
+    }, 
+    onClose: () => {
+        console.log("Modal 2 closed");
+    }
 
 });
 const btnModal2 = document.querySelector("#modal-2");
