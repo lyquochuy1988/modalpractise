@@ -1,9 +1,9 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-Modal.elements = [];
+Popzy.elements = [];
 
-function Modal(options = {}) {  
+function Popzy(options = {}) {  
     this.opt = Object.assign({ 
         // templateID,
         closeMethods: ["button", "overlay", "escape"],
@@ -33,16 +33,16 @@ function Modal(options = {}) {
     // Note: chỉ bind được khi this._handleEscapeKey là function() , còn array function thì không bind được
 }
 
-Modal.prototype._build = function() {
+Popzy.prototype._build = function() {
     const content = this.template.content.cloneNode(true);
 
     // Create Element Modal Backdrop
     this._modalBackdrop = document.createElement("div");
-    this._modalBackdrop.classList = "modal-backdrop";
+    this._modalBackdrop.classList = "popzy__backdrop";
 
     // Create Element Modal Container
     const modalContainer = document.createElement("div");
-    modalContainer.classList = "modal-container";
+    modalContainer.classList = "popzy__container";
 
     this.opt.cssClass.forEach(className => {
         if (typeof className === "string") {
@@ -59,7 +59,7 @@ Modal.prototype._build = function() {
         //     this.close();
         // }
 
-        const modalClose = this._createButton("&times", "modal-close", () => this.close());
+        const modalClose = this._createButton("&times", "popzy__close", () => this.close());
 
         modalContainer.append(modalClose);
 
@@ -68,13 +68,13 @@ Modal.prototype._build = function() {
 
     // Create Element Modal Content
     const modalContent = document.createElement("div");
-    modalContent.classList = "modal-content";
+    modalContent.classList = "popzy__content";
     modalContent.append(content);
     modalContainer.append(modalContent);
 
     if (this.opt.footer) {
         this._modalFooter = document.createElement("div");
-        this._modalFooter.classList = "modal-footer";
+        this._modalFooter.classList = "popzy__footer";
 
         this._renderFooterContent();
         this._renderFooterButtons();
@@ -87,25 +87,25 @@ Modal.prototype._build = function() {
     document.body.append(this._modalBackdrop);
 }
 
-Modal.prototype.setFooterContent = function(html) {
+Popzy.prototype.setFooterContent = function(html) {
     this._footerContent = html;
     this._renderFooterContent();
 }
 
-Modal.prototype.addFooterButton = function(title, cssClass, callback) {
+Popzy.prototype.addFooterButton = function(title, cssClass, callback) {
     const button = this._createButton(title, cssClass, callback);
     this._footerButtons.push(button);
 
     this._renderFooterButtons();
 }
 
-Modal.prototype._renderFooterContent = function() {
+Popzy.prototype._renderFooterContent = function() {
     if (this._modalFooter && this._footerContent) {
         this._modalFooter.innerHTML = this._footerContent;
     }
 }
 
-Modal.prototype._renderFooterButtons = function() {
+Popzy.prototype._renderFooterButtons = function() {
     if (this._modalFooter) {
         this._footerButtons.forEach(button => {
             this._modalFooter.append(button);
@@ -113,7 +113,7 @@ Modal.prototype._renderFooterButtons = function() {
     }
 }
 
-Modal.prototype._createButton = function(title, cssClass, callback) {
+Popzy.prototype._createButton = function(title, cssClass, callback) {
     const button = document.createElement("button");
     button.className = cssClass;
     button.innerHTML = title;
@@ -122,8 +122,8 @@ Modal.prototype._createButton = function(title, cssClass, callback) {
     return button;
 }
 
-Modal.prototype.open = function() {
-    Modal.elements.push(this);
+Popzy.prototype.open = function() {
+    Popzy.elements.push(this);
     
     if (!this._modalBackdrop) {
         this._build();
@@ -132,7 +132,7 @@ Modal.prototype.open = function() {
     // Add Class show to this._modalBackdrop
     if (this._modalBackdrop) {
         setTimeout(() => {
-            this._modalBackdrop.classList.add("show");
+            this._modalBackdrop.classList.add("popzy--show");
         }, 0);
     }        
 
@@ -154,7 +154,7 @@ Modal.prototype.open = function() {
     }
 
     // Add class no-scroll : disable scrolling
-    document.body.classList.add("no-scroll");
+    document.body.classList.add("popzy--no-scroll");
     document.body.style.paddingRight = this._getScrollbarWidth() + "px";
 
     this._onTransitionEnd(this.opt.onOpen);
@@ -162,23 +162,23 @@ Modal.prototype.open = function() {
     return this._modalBackdrop;
 }
 
-Modal.prototype._handleEscapeKey = function(e) {
-    const lastModal = Modal.elements[Modal.elements.length - 1];
+Popzy.prototype._handleEscapeKey = function(e) {
+    const lastModal = Popzy.elements[Popzy.elements.length - 1];
     if (e.key === "Escape" && this === lastModal) {
         this.close();
     }
 }
 
-Modal.prototype._onTransitionEnd = function(callback) {
+Popzy.prototype._onTransitionEnd = function(callback) {
     this._modalBackdrop.ontransitionend = (e) => {            
         if (e.propertyName !== 'transform') return;    
         if (typeof callback === 'function') callback();
     }
 }
 
-Modal.prototype.close = function(destroy = this.opt.destroyOnClose) {
-    Modal.elements.pop();
-    this._modalBackdrop.classList.remove("show");
+Popzy.prototype.close = function(destroy = this.opt.destroyOnClose) {
+    Popzy.elements.pop();
+    this._modalBackdrop.classList.remove("popzy--show");
 
     // Escape keydown close modal
     if (this._allowEscapeClose) {
@@ -193,8 +193,8 @@ Modal.prototype.close = function(destroy = this.opt.destroyOnClose) {
         }
 
         // Remove class no-scroll : enable scrolling
-        if (!Modal.elements.length) {
-            document.body.classList.remove("no-scroll");
+        if (!Popzy.elements.length) {
+            document.body.classList.remove("popzy--no-scroll");
             document.body.style.paddingRight = "";
         }
 
@@ -202,11 +202,11 @@ Modal.prototype.close = function(destroy = this.opt.destroyOnClose) {
     })  
 }
 
-Modal.prototype.destroy = function() {
+Popzy.prototype.destroy = function() {
     this.close(true);
 }
 
-Modal.prototype._getScrollbarWidth = function() {
+Popzy.prototype._getScrollbarWidth = function() {
     if (this._scrollbarWidth) return this._scrollbarWidth;
 
     const div = document.createElement("div");
@@ -225,7 +225,7 @@ Modal.prototype._getScrollbarWidth = function() {
     return this._scrollbarWidth;
 }
 
-const modal1 = new Modal({
+const modal1 = new Popzy({
     templateID: "template-modal-1",
     closeMethods: ["button", "overlay", "escape"],
     destroyOnClose: false,
@@ -243,7 +243,7 @@ btnModal1.onclick = () => {
     modal1.open();
 }
 
-const modal2 = new Modal({
+const modal2 = new Popzy({
     templateID: "template-modal-2",
     // allowBackdropClose: false,
     // footer: true,
@@ -268,18 +268,18 @@ btnModal2.onclick = () => {
     // modal2.destroy();
 }
 
-const modal3 = new Modal({
+const modal3 = new Popzy({
     templateID: "template-modal-3",
     footer: true,
 });
 
 // modal3.setFooterContent("this is footer content");
 
-modal3.addFooterButton("Cancel", "modal-btn", (e) => {
+modal3.addFooterButton("Cancel", "popzy__btn", (e) => {
     modal3.close();
 });
 
-modal3.addFooterButton("<span>Agree</span>", "modal-btn primary", (e) => {
+modal3.addFooterButton("<span>Agree</span>", "popzy__btn popzy__btn--primary", (e) => {
     modal3.close();
 });
 
