@@ -25,11 +25,8 @@ function Modal(options = {}) {
     this._allowBackdropClose = closeMethods.includes("overlay");
     this._allowEscapeClose = closeMethods.includes("escape");
     
-    function getScrollbarWidth() {
-        if (getScrollbarWidth.value) {
-            console.log("Gia tri da duoc luu, khong can tinh toan lai");
-            return getScrollbarWidth.value;
-        }
+    this._getScrollbarWidth = () => {
+        if (this._scrollbarWidth) return this._scrollbarWidth;
 
         const div = document.createElement("div");
         Object.assign(div.style, {
@@ -40,15 +37,11 @@ function Modal(options = {}) {
     
         document.body.appendChild(div);
     
-        const scrollbarWidth = div.offsetWidth - div.clientWidth;
+        this._scrollbarWidth = div.offsetWidth - div.clientWidth;
         
         document.body.removeChild(div);
 
-        getScrollbarWidth.value = scrollbarWidth;
-
-        console.log("Tinh toan kich thuoc thanh cuon: ", scrollbarWidth);
-
-        return scrollbarWidth;
+        return this._scrollbarWidth;
     }
 
     this._build = () => {
@@ -70,16 +63,18 @@ function Modal(options = {}) {
 
         if (this._allowButtonClose) {
             // Create Element Modal Close
-            const modalClose = document.createElement("button");
-            modalClose.classList = "modal-close";
-            modalClose.innerHTML = "&times";
+            // const modalClose = document.createElement("button");
+            // modalClose.classList = "modal-close";
+            // modalClose.innerHTML = "&times";
+            // modalClose.onclick = () => {
+            //     this.close();
+            // }
+
+            const modalClose = this._createButton("&times", "modal-close", this.close);
 
             modalContainer.append(modalClose);
 
-            // Modal Close click
-            modalClose.onclick = () => {
-                this.close();
-            }
+            
         }
         
 
@@ -93,13 +88,8 @@ function Modal(options = {}) {
             this._modalFooter = document.createElement("div");
             this._modalFooter.classList = "modal-footer";
 
-            if (this._footerContent) {
-                this._modalFooter.innerHTML = this._footerContent;
-            }
-
-            this._footerButtons.forEach(button => {
-                this._modalFooter.append(button);
-            });
+            this._renderFooterContent();
+            this._renderFooterButtons();
 
             modalContainer.append(this._modalFooter);
         }
@@ -111,20 +101,39 @@ function Modal(options = {}) {
 
     this.setFooterContent = (html) => {
         this._footerContent = html;
-        if (this._modalFooter) {
-            this._modalFooter.innerHTML = this._footerContent;
-        }
+        this._renderFooterContent();
     }
 
     this._footerButtons = [];
 
     this.addFooterButton = (title, cssClass, callback) => {
+        const button = this._createButton(title, cssClass, callback);
+        this._footerButtons.push(button);
+
+        this._renderFooterButtons();
+    }
+
+    this._renderFooterContent = () => {
+        if (this._modalFooter && this._footerContent) {
+            this._modalFooter.innerHTML = this._footerContent;
+        }
+    }
+
+    this._renderFooterButtons = () => {
+        if (this._modalFooter) {
+            this._footerButtons.forEach(button => {
+                this._modalFooter.append(button);
+            });
+        }
+    }
+
+    this._createButton = (title, cssClass, callback) => {
         const button = document.createElement("button");
         button.className = cssClass;
         button.innerHTML = title;
         button.onclick = callback;
 
-        this._footerButtons.push(button);
+        return button;
     }
 
     this.open = () => {
@@ -157,11 +166,9 @@ function Modal(options = {}) {
 
         // Add class no-scroll : disable scrolling
         document.body.classList.add("no-scroll");
-        document.body.style.paddingRight = getScrollbarWidth() + "px";
+        document.body.style.paddingRight = this._getScrollbarWidth() + "px";
 
-        this._onTransitionEnd(() => {
-            if (typeof onOpen === 'function') onOpen();
-        })
+        this._onTransitionEnd(onOpen);
 
         return this._modalBackdrop;
     }
@@ -258,6 +265,8 @@ const modal3 = new Modal({
     templateID: "template-modal-3",
     footer: true,
 });
+
+// modal3.setFooterContent("this is footer content");
 
 modal3.addFooterButton("Cancel", "modal-btn", (e) => {
     modal3.close();
