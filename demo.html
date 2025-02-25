@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lyquochuy1988/popzy/popzy.min.css">
+</head>
+<body>
+    <a href="#" id="book-a-meet-btn">Book a meet</a>
+
+    <template id="book-a-meet-template">
+        <h3>Modal title</h3>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta, officiis.</p>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/gh/lyquochuy1988/popzy/popzy.min.js"></script>
+    <script>
+        const bookAmeetBtn = document.querySelector("#book-a-meet-btn");
+        const modal = new Popzy({
+            templateID: "book-a-meet-template",
+            footer: true,
+            closeMethods: ["overlay", "escape"],
+        });
+
+        modal.addFooterButton("Close", "modal-btn", (e) => {
+            console.log(e);
+            modal.close();
+        })
+
+        bookAmeetBtn.onclick = () => {
+            modal.open();
+        }
+    </script>
+</body>
+</html>
